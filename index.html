@@ -1,628 +1,598 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>中山分隊每日值班事項</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-color: #f5f7fa;
-            --card-bg: #ffffff;
-            --text-main: #333333;
-            --text-muted: #7f8c8d;
-            --border-color: #e4e7eb;
-            --hover-bg: #f8f9fa;
-            
-            /* 區塊主題色 */
-            --theme-basic: #3498db;   /* 藍 */
-            --theme-shift: #e67e22;   /* 橘 */
-            --theme-hourly: #9b59b6;  /* 紫 */
-            
-            /* 時段主題色 */
-            --time-morning-bg: #fff3e0;
-            --time-morning-text: #d35400;
-            --time-day-bg: #e3f2fd;
-            --time-day-text: #2980b9;
-            --time-afternoon-bg: #fbeee6;
-            --time-afternoon-text: #c0392b;
-            --time-night-bg: #eaeded;
-            --time-night-text: #2c3e50;
-            --time-sleep-bg: #f5eef8;
-            --time-sleep-text: #8e44ad;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0f172a">
+<title>中山分隊每日值班事項</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-        body {
-            font-family: 'Noto Sans TC', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            margin: 0;
-            padding: 20px;
-            line-height: 1.6;
-        }
+<style>
+:root{
+    /* 背景與基礎色系 */
+    --bg-grad: linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 100%);
+    --surface: rgba(255, 255, 255, 0.75);
+    --surface-hover: rgba(255, 255, 255, 0.95);
+    --text: #0f172a;
+    --text-muted: #64748b;
+    --line: rgba(226, 232, 240, 0.8);
+    --shadow-sm: 0 2px 8px -2px rgba(15, 23, 42, 0.05);
+    --shadow-md: 0 12px 32px -8px rgba(15, 23, 42, 0.08);
+    --shadow-hover: 0 20px 40px -12px rgba(15, 23, 42, 0.15);
+    --radius-sm: 10px;
+    --radius-md: 16px;
+    --radius-lg: 20px;
+}
 
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-            padding-bottom: 16px;
-            border-bottom: 2px solid var(--border-color);
-        }
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+    margin:0;
+    min-height:100vh;
+    font-family:"Noto Sans TC", sans-serif;
+    color:var(--text);
+    background: var(--bg-grad);
+    background-attachment: fixed;
+    line-height:1.5;
+    -webkit-font-smoothing: antialiased;
+}
+button,input{font:inherit; outline:none;}
+button{cursor:pointer}
 
-        .header h1 {
-            margin: 0;
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--text-main);
-        }
+/* 捲軸美化 */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-        .clock {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--theme-basic);
-            background: var(--card-bg);
-            padding: 8px 16px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-        }
+/* 主容器：因頂部無區塊，增加上方 padding */
+.app{max-width:1800px; width:98%; margin:auto; padding:24px 12px;}
 
-        .btn-reset {
-            background-color: var(--card-bg);
-            color: var(--text-main);
-            border: 1px solid var(--border-color);
-            padding: 4px 10px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 13px;
-            transition: all 0.2s;
-            font-family: inherit;
-        }
+.btn{
+    border:0;border-radius:10px;padding:8px 16px;
+    font-weight:700;transition:all .2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.btn:active{transform:scale(0.92)}
+.btn-reset{
+    background:rgba(255,255,255,0.8);color:#475569;
+    border:1px solid #cbd5e1;padding:4px 12px;font-size:12px;border-radius:8px;
+}
+.btn-reset:hover{background:#fff;color:#0f172a; border-color:#94a3b8; box-shadow: var(--shadow-sm);}
 
-        .btn-reset:hover {
-            background-color: var(--border-color);
-        }
+/* Main Layout */
+.container{
+    display:grid;
+    grid-template-columns:310px minmax(0,1fr);
+    gap:20px; 
+    align-items:start;
+}
 
-        .btn-reset-all {
-            background-color: var(--text-main);
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            transition: opacity 0.2s;
-        }
+/* 左側欄 (固定不動) */
+.left-column{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    position:sticky;
+    top:24px; /* 避開頂部邊界 */
+    max-height:calc(100vh - 48px);
+    overflow-y:auto;
+    scrollbar-width:none; 
+}
+.left-column::-webkit-scrollbar { display:none; }
 
-        .btn-reset-all:hover {
-            opacity: 0.8;
-        }
+/* 共用卡片風格 (Glassmorphism) */
+.card{
+    background: var(--surface);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+.card:hover { box-shadow: var(--shadow-hover); }
+.column-card{padding:16px;}
 
-        .container {
-            display: grid;
-            grid-template-columns: 320px 1fr;
-            gap: 24px;
-            align-items: start;
-        }
+.section-header{
+    display:flex;align-items:center;justify-content:space-between;
+    gap:10px;padding-bottom:12px;margin-bottom:12px;
+    border-bottom:1px solid var(--line)
+}
+.section-title{display:flex;align-items:center;gap:8px}
+.section-title h2{margin:0;font-size:16px;font-weight:800; color:#1e293b;}
 
-        .column-card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-            border: 1px solid var(--border-color);
-            position: relative;
-            overflow: hidden;
-        }
+/* 數量標籤 */
+.badge{
+    min-width:26px;padding:2px 6px;text-align:center;border-radius:99px;
+    font-size:11px;font-weight:800;
+    background:var(--t-pill-bg, #eff6ff);
+    color:var(--t-check, #2563eb);
+    box-shadow: inset 0 1px 2px rgba(255,255,255,0.5);
+}
 
-        /* 左側卡片頂部色條 */
-        .card-basic { border-top: 5px solid var(--theme-basic); }
-        .card-shift { border-top: 5px solid var(--theme-shift); }
-        .card-hourly { border-top: 5px solid var(--theme-hourly); }
+/* 區塊色系變數 */
+.card-basic{border-top:4px solid #2563eb; --t-bg:#eff6ff; --t-border:#bfdbfe; --t-text:#1d4ed8; --t-check:#2563eb; --t-pill-bg:#dbeafe; --t-hover:#e0e7ff;}
+.card-hourly{border-top:4px solid #16a34a; --t-bg:#f0fdf4; --t-border:#bbf7d0; --t-text:#15803d; --t-check:#16a34a; --t-pill-bg:#dcfce7; --t-hover:#dcfce7;}
+.card-shift{border-top:4px solid #db2777; --t-bg:#fdf2f8; --t-border:#fbcfe8; --t-text:#be185d; --t-check:#db2777; --t-pill-bg:#fce7f3; --t-hover:#fce7f3;}
 
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid #f0f0f0;
-        }
+/* Task Items */
+.task-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.task-item{
+    position:relative;
+    display:flex;align-items:flex-start;gap:10px;
+    padding:10px 12px;
+    border:1px solid transparent;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    transition: all .25s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+/* Hover 效果進化：微浮起 + 背景高光 */
+.task-item:hover{
+    background: var(--surface-hover);
+    border-color: rgba(255,255,255,0.9);
+    box-shadow: var(--shadow-sm);
+    transform: translateY(-1px);
+}
 
-        .section-header h2 {
-            margin: 0;
-            font-size: 18px;
-            font-weight: 700;
-        }
+/* 已完成狀態 */
+.task-item.done{
+    background: var(--t-bg, #f0fdf4);
+    border-color: var(--t-border, #bbf7d0);
+    opacity: 0.8;
+}
+.task-item.done:hover{ transform: translateY(0); opacity: 0.95; }
+.task-item.done .task-text{
+    color: var(--t-text, #166534);
+    text-decoration: line-through;
+    text-decoration-thickness: 2px;
+    text-decoration-color: var(--t-check);
+}
 
-        .card-basic .section-header h2 { color: var(--theme-basic); }
-        .card-shift .section-header h2 { color: var(--theme-shift); }
-        .card-hourly .section-header h2 { color: var(--theme-hourly); }
+/* 核取方塊 (Apple-like Rounded Checkbox) */
+.task-checkbox{
+    appearance:none;
+    width:20px;height:20px;margin:2px 0 0;
+    flex:0 0 20px;
+    border:2px solid #cbd5e1;
+    border-radius: 6px;
+    background: linear-gradient(180deg, #fff 0%, #f8fafc 100%);
+    position:relative;cursor:pointer;
+    transition: all .2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+}
+.task-checkbox:hover{border-color:#94a3b8; transform:scale(1.08);}
 
-        .task-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            gap: 6px; 
-        }
+@keyframes checkPop {
+    0% { transform: scale(0) rotate(-15deg); opacity: 0; }
+    60% { transform: scale(1.25) rotate(5deg); }
+    100% { transform: scale(1) rotate(0); opacity: 1; }
+}
+.task-checkbox:checked{
+    background: linear-gradient(135deg, var(--t-check) 0%, var(--t-text) 100%);
+    border-color: transparent;
+    box-shadow: 0 2px 6px rgba(var(--glow-rgb, 0,0,0), 0.2);
+}
+.task-checkbox:checked::after{
+    content:"✓";position:absolute;left:3.5px;top:-3px;color:#fff;
+    font-size:14px;font-weight:900;
+    animation: checkPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
 
-        .task-item {
-            display: flex;
-            align-items: flex-start;
-            padding: 12px 10px;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            border: 1px solid transparent; 
-            background-color: transparent;
-        }
+.task-content{min-width:0;flex:1;}
+.task-text{display:block;font-size:14px;font-weight:700;cursor:pointer;color:var(--text);transition:color .2s; line-height:1.4;}
+.task-subtext{font-size:12px;color:var(--text-muted);margin-top:3px;line-height:1.4;font-weight:500;}
 
-        .task-item:hover {
-            background-color: var(--hover-bg);
-        }
+/* 完成小標籤 */
+.task-state{
+    display:none;align-self:center;font-size:10px;font-weight:800;
+    color:var(--t-text);background:var(--t-pill-bg);border-radius:99px;padding:3px 8px;
+    box-shadow: inset 0 1px 2px rgba(255,255,255,0.5);
+    letter-spacing: 0.5px;
+}
+.task-item.done .task-state{display:block; animation: checkPop 0.3s ease forwards;}
 
-        .task-checkbox {
-            margin-top: 4px;
-            margin-right: 12px;
-            width: 18px;
-            height: 18px;
-            cursor: pointer;
-        }
+/* Schedule Right Panel */
+.schedule-card{padding:18px 20px;}
+.schedule-header{
+    display:flex;justify-content:space-between;align-items:center;gap:12px;
+    padding-bottom:14px;border-bottom:1px solid var(--line);margin-bottom:18px
+}
+.schedule-header h2{margin:0;font-size:18px; color:#1e293b;}
+.schedule-header p{margin:2px 0 0;color:var(--text-muted);font-size:12.5px;font-weight:500;}
 
-        .task-content {
-            flex: 1;
-        }
+/* ★ 右側網格：極致 5 欄排版 ★ */
+.right-grid{
+    display:grid;
+    grid-template-columns:repeat(5, minmax(0,1fr));
+    gap:14px; 
+    align-items:start; /* 高度各自獨立，不硬拉長 */
+}
 
-        .task-text {
-            font-size: 15px;
-            font-weight: 500;
-            transition: color 0.3s, font-weight 0.3s;
-            display: block;
-            cursor: pointer;
-        }
+/* 時段卡片 */
+.time-section{
+    position:relative;
+    padding:14px;
+    border:1px solid rgba(255,255,255,0.9);
+    border-radius: var(--radius-md);
+    background: linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.7) 100%);
+    box-shadow: 0 4px 12px rgba(15,23,42,0.03);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+.time-section:hover { 
+    border-color: #cbd5e1; 
+    box-shadow: 0 8px 24px rgba(15,23,42,0.06);
+    background: #fff;
+}
+/* 左側裝飾線改為膠囊狀 */
+.time-section::before{
+    content:"";position:absolute;left:0;top:16px;bottom:16px;width:4px;
+    background:var(--section-color);
+    border-radius: 0 4px 4px 0;
+    transition: .3s ease;
+}
 
-        .task-subtext {
-            font-size: 13px;
-            color: var(--text-muted);
-            margin-top: 4px;
-            line-height: 1.4;
-            transition: color 0.3s;
-        }
+.time-block-title{
+    display:flex;align-items:center;gap:8px;
+    margin:0 0 12px;padding:8px 12px;border-radius:10px;
+    background:var(--section-bg);color:var(--section-color);
+    font-size:15px;font-weight:800;
+    box-shadow: inset 0 1px 2px rgba(255,255,255,0.5);
+}
+.sub-time{
+    display:flex;align-items:center;gap:8px;
+    margin:12px 0 8px;padding-left:4px;
+    color:#475569;font-size:12.5px;font-weight:800;
+}
+.sub-time::before{
+    content:"";width:7px;height:7px;border-radius:50%;
+    background:var(--section-color);box-shadow:0 0 0 3px var(--section-bg)
+}
 
-        /* =========================================
-           打勾後狀態：各區塊的「同色系」設計
-           ========================================= */
+/* 右側時段顏色變數 (絕不重複) */
+.section-morning{--section-color:#ea580c; --glow-rgb:234,88,12; --section-bg:#fff7ed; --t-bg:#fff7ed; --t-border:#fed7aa; --t-text:#c2410c; --t-check:#ea580c; --t-pill-bg:#ffedd5;}
+.section-day{--section-color:#0891b2; --glow-rgb:8,145,178; --section-bg:#ecfeff; --t-bg:#ecfeff; --t-border:#a5f3fc; --t-text:#0e7490; --t-check:#0891b2; --t-pill-bg:#cffafe;}
+.section-afternoon{--section-color:#dc2626; --glow-rgb:220,38,38; --section-bg:#fef2f2; --t-bg:#fef2f2; --t-border:#fecaca; --t-text:#b91c1c; --t-check:#dc2626; --t-pill-bg:#fee2e2;}
+.section-night{--section-color:#334155; --glow-rgb:51,65,85; --section-bg:#f1f5f9; --t-bg:#f8fafc; --t-border:#e2e8f0; --t-text:#334155; --t-check:#475569; --t-pill-bg:#e2e8f0;}
+.section-sleep{--section-color:#7c3aed; --glow-rgb:124,58,237; --section-bg:#f5f3ff; --t-bg:#f5f3ff; --t-border:#ddd6fe; --t-text:#6d28d9; --t-check:#7c3aed; --t-pill-bg:#ede9fe;}
 
-        /* 1. 基本值班 (藍色系) */
-        .card-basic .task-item:has(input:checked) {
-            background-color: #ebf5fb;
-            border-color: #a9cce3;
-        }
-        .card-basic .task-item:has(input:checked) .task-text { color: #154360; font-weight: 700; }
-        .card-basic .task-item:has(input:checked) .task-subtext { color: #2980b9; }
-        .card-basic .task-checkbox:checked { accent-color: #2980b9; }
+/* 🔥 目前時段 (Current Period) 極致進化 */
+@keyframes currentPulse {
+    0% { box-shadow: 0 0 0 2px var(--section-color), 0 8px 20px rgba(var(--glow-rgb), 0.15); }
+    50% { box-shadow: 0 0 0 4px rgba(var(--glow-rgb), 0.5), 0 16px 36px rgba(var(--glow-rgb), 0.25); }
+    100% { box-shadow: 0 0 0 2px var(--section-color), 0 8px 20px rgba(var(--glow-rgb), 0.15); }
+}
+.time-section.current{
+    background: #ffffff;
+    border-color: transparent;
+    animation: currentPulse 2.5s infinite ease-in-out;
+    z-index: 10;
+    transform: scale(1.02) translateY(-2px); /* 微放大並上浮 */
+}
+.time-section.current::before {
+    width: 6px;
+    background: var(--section-color);
+    box-shadow: 2px 0 8px rgba(var(--glow-rgb), 0.5);
+}
+.time-section.current .time-block-title::after{
+    content:"🔥 目前時段";
+    margin-left:auto;
+    padding:4px 10px;
+    border-radius:99px;
+    background: linear-gradient(135deg, var(--section-color), rgba(var(--glow-rgb), 0.8));
+    color:#fff;
+    font-size:11px;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 10px rgba(var(--glow-rgb), 0.4);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
 
-        /* 2. 基本交班 (橘色系) */
-        .card-shift .task-item:has(input:checked) {
-            background-color: #fdf2e9;
-            border-color: #f5cba7;
-        }
-        .card-shift .task-item:has(input:checked) .task-text { color: #a04000; font-weight: 700; }
-        .card-shift .task-item:has(input:checked) .task-subtext { color: #d35400; }
-        .card-shift .task-checkbox:checked { accent-color: #d35400; }
+/* Toast 通知 */
+.toast{
+    position:fixed;right:24px;bottom:24px;z-index:50;
+    background: linear-gradient(135deg, #1e293b, #0f172a);
+    color:#fff;padding:12px 24px;border-radius:14px;
+    font-weight: 600; font-size: 14px; letter-spacing: 0.5px;
+    box-shadow: 0 16px 40px rgba(15,23,42,.4);
+    border: 1px solid rgba(255,255,255,0.1);
+    transform:translateY(40px) scale(0.9);opacity:0;pointer-events:none;
+    transition:all .4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.toast.show{transform:translateY(0) scale(1);opacity:1}
 
-        /* 3. 整點注意 (紫色系) */
-        .card-hourly .task-item:has(input:checked) {
-            background-color: #f5eef8;
-            border-color: #d7bde2;
-        }
-        .card-hourly .task-item:has(input:checked) .task-text { color: #4a235a; font-weight: 700; }
-        .card-hourly .task-item:has(input:checked) .task-subtext { color: #76448a; }
-        .card-hourly .task-checkbox:checked { accent-color: #76448a; }
+/* Responsive 響應式佈局 */
+@media(max-width:1300px){
+    .right-grid{grid-template-columns:repeat(3, minmax(0,1fr))}
+}
+@media(max-width:1024px){
+    .container{grid-template-columns:1fr;}
+    .left-column{display:grid;grid-template-columns:repeat(3,1fr);position:static;max-height:none;overflow:visible;}
+    .right-grid{grid-template-columns:repeat(5, minmax(0,1fr))}
+}
+@media(max-width:860px){
+    .app{padding:12px;}
+    .left-column{grid-template-columns:1fr;display:grid}
+    .right-grid{grid-template-columns:repeat(2, minmax(0,1fr))}
+}
+@media(max-width:480px){
+    .right-grid{grid-template-columns:1fr}
+}
 
-        /* 4. 晨間準備 (晨曦橘黃系) */
-        .section-morning .task-item:has(input:checked) {
-            background-color: #fef5e7;
-            border-color: #fad7a1;
-        }
-        .section-morning .task-item:has(input:checked) .task-text { color: #7e5109; font-weight: 700; }
-        .section-morning .task-item:has(input:checked) .task-subtext { color: #b9770e; }
-        .section-morning .task-checkbox:checked { accent-color: #b9770e; }
-
-        /* 5. 上午班 (晴空湛藍系) */
-        .section-day .task-item:has(input:checked) {
-            background-color: #ebf5fb;
-            border-color: #a9cce3;
-        }
-        .section-day .task-item:has(input:checked) .task-text { color: #154360; font-weight: 700; }
-        .section-day .task-item:has(input:checked) .task-subtext { color: #2980b9; }
-        .section-day .task-checkbox:checked { accent-color: #2980b9; }
-
-        /* 6. 下午班 (午後暖紅系) */
-        .section-afternoon .task-item:has(input:checked) {
-            background-color: #fdedec;
-            border-color: #f1948a;
-        }
-        .section-afternoon .task-item:has(input:checked) .task-text { color: #78281f; font-weight: 700; }
-        .section-afternoon .task-item:has(input:checked) .task-subtext { color: #cb4335; }
-        .section-afternoon .task-checkbox:checked { accent-color: #cb4335; }
-
-        /* 7. 晚間班 (夜幕深灰系) */
-        .section-night .task-item:has(input:checked) {
-            background-color: #ebedef;
-            border-color: #d5d8dc;
-        }
-        .section-night .task-item:has(input:checked) .task-text { color: #1b2631; font-weight: 700; }
-        .section-night .task-item:has(input:checked) .task-subtext { color: #2e4053; }
-        .section-night .task-checkbox:checked { accent-color: #2e4053; }
-
-        /* 8. 值宿準備 (靜謐深紫系) */
-        .section-sleep .task-item:has(input:checked) {
-            background-color: #f4ecf7;
-            border-color: #d2b4de;
-        }
-        .section-sleep .task-item:has(input:checked) .task-text { color: #4a235a; font-weight: 700; }
-        .section-sleep .task-item:has(input:checked) .task-subtext { color: #76448a; }
-        .section-sleep .task-checkbox:checked { accent-color: #76448a; }
-
-        /* ========================================= */
-
-        /* 右側時序區塊標題設計 */
-        .time-block-title {
-            font-size: 15px;
-            font-weight: 700;
-            margin: 20px 0 12px 0;
-            padding: 6px 12px;
-            border-radius: 6px;
-            display: inline-block;
-        }
-        
-        .time-block-title:first-child {
-            margin-top: 0;
-        }
-
-        .sub-time {
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--text-muted);
-            margin: 16px 0 8px 8px;
-            display: flex;
-            align-items: center;
-        }
-        
-        .sub-time::before {
-            content: '';
-            display: inline-block;
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background-color: var(--border-color);
-            margin-right: 8px;
-        }
-
-        /* 時段專屬顏色 */
-        .theme-morning { background-color: var(--time-morning-bg); color: var(--time-morning-text); }
-        .theme-day { background-color: var(--time-day-bg); color: var(--time-day-text); }
-        .theme-afternoon { background-color: var(--time-afternoon-bg); color: var(--time-afternoon-text); }
-        .theme-night { background-color: var(--time-night-bg); color: var(--time-night-text); }
-        .theme-sleep { background-color: var(--time-sleep-bg); color: var(--time-sleep-text); }
-
-        .right-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 24px;
-        }
-
-        /* Responsive */
-        @media (max-width: 1024px) {
-            .container {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+/* Print 列印樣式 */
+@media print{
+    body{background:#fff}
+    .btn{display:none}
+    .card,.time-section{box-shadow:none;animation:none;transform:none;border-color:#ddd}
+    .time-section.current .time-block-title::after{display:none}
+    .task-item{break-inside:avoid}
+}
+</style>
 </head>
+
 <body>
+<div class="app">
 
-    <div class="header">
-        <h1>中山分隊每日值班事項</h1>
-        <div style="display: flex; gap: 16px; align-items: center;">
-            <div class="clock" id="clock">0000-00-00 00:00:00</div>
-            <button class="btn-reset-all" onclick="resetAll()">全部重置</button>
-        </div>
-    </div>
+<main class="container">
 
-    <div class="container">
-        <!-- 左側：基本事項 -->
-        <div class="left-column">
-            
-            <!-- 基本值班事項 -->
-            <div class="column-card card-basic" style="margin-bottom: 20px;">
-                <div class="section-header">
-                    <h2>基本值班事項</h2>
-                    <button class="btn-reset" onclick="resetSection('basic')">重置</button>
-                </div>
-                <ul class="task-list" id="basic-tasks">
-                    <li class="task-item">
-                        <input type="checkbox" id="b1" class="task-checkbox" onchange="saveState()">
-                        <div class="task-content"><label for="b1" class="task-text">簽出入登記簿（先簽值班 → 再簽交接）</label></div>
-                    </li>
-                    <li class="task-item">
-                        <input type="checkbox" id="b2" class="task-checkbox" onchange="saveState()">
-                        <div class="task-content"><label for="b2" class="task-text">派遣台接班人員登入</label></div>
-                    </li>
-                    <li class="task-item">
-                        <input type="checkbox" id="b3" class="task-checkbox" onchange="saveState()">
-                        <div class="task-content"><label for="b3" class="task-text">檢查無線電數量是否正確</label></div>
-                    </li>
-                    <li class="task-item">
-                        <input type="checkbox" id="t80_1" class="task-checkbox" onchange="saveState()">
-                        <div class="task-content"><label for="t80_1" class="task-text">下載 91、92 車 行車紀錄影像</label></div>
-                    </li>
-                    <li class="task-item">
-                        <input type="checkbox" id="t80_2" class="task-checkbox" onchange="saveState()">
-                        <div class="task-content"><label for="t80_2" class="task-text">檢查救護影像資料夾</label></div>
-                    </li>
-                </ul>
+    <aside class="left-column">
+
+        <section class="card column-card card-basic">
+            <div class="section-header">
+                <div class="section-title"><span>📋</span><h2>基本值班事項</h2><span class="badge" data-badge="basic">0/5</span></div>
+                <button class="btn btn-reset" onclick="resetSection('basic')">重置</button>
             </div>
+            <ul class="task-list" id="basic-tasks">
+                <li class="task-item"><input type="checkbox" id="b1" class="task-checkbox"><div class="task-content"><label for="b1" class="task-text">簽出入登記簿</label><div class="task-subtext">先簽值班 → 再簽交接</div></div><span class="task-state">完成</span></li>
+                <li class="task-item"><input type="checkbox" id="b2" class="task-checkbox"><div class="task-content"><label for="b2" class="task-text">派遣台接班人員登入</label></div><span class="task-state">完成</span></li>
+                <li class="task-item"><input type="checkbox" id="b3" class="task-checkbox"><div class="task-content"><label for="b3" class="task-text">檢查無線電數量是否正確</label></div><span class="task-state">完成</span></li>
+                <li class="task-item"><input type="checkbox" id="t80_1" class="task-checkbox"><div class="task-content"><label for="t80_1" class="task-text">下載 91、92 車 行車紀錄影像</label></div><span class="task-state">完成</span></li>
+                <li class="task-item"><input type="checkbox" id="t80_2" class="task-checkbox"><div class="task-content"><label for="t80_2" class="task-text">檢查救護影像資料夾</label></div><span class="task-state">完成</span></li>
+            </ul>
+        </section>
 
-            <!-- 基本交班事項 -->
-            <div class="column-card card-shift" style="margin-bottom: 20px;">
-                <div class="section-header">
-                    <h2>基本交班事項</h2>
-                    <button class="btn-reset" onclick="resetSection('shift')">重置</button>
-                </div>
-                <ul class="task-list" id="shift-tasks">
-                    <li class="task-item">
-                        <input type="checkbox" id="s1" class="task-checkbox" onchange="saveState()">
-                        <div class="task-content"><label for="s1" class="task-text">網路通報</label></div>
-                    </li>
-                    <li class="task-item">
-                        <input type="checkbox" id="s2" class="task-checkbox" onchange="saveState()">
-                        <div class="task-content"><label for="s2" class="task-text">填寫工作紀錄</label></div>
-                    </li>
-                </ul>
+        <section class="card column-card card-hourly">
+            <div class="section-header">
+                <div class="section-title"><span>🕐</span><h2>整點注意事項</h2><span class="badge" data-badge="hourly">0/2</span></div>
+                <button class="btn btn-reset" onclick="resetSection('hourly')">重置</button>
             </div>
+            <div class="task-subtext" style="margin:-4px 0 10px;">8、10、12、14、16、18、20、22 時</div>
+            <ul class="task-list" id="hourly-tasks">
+                <li class="task-item"><input type="checkbox" id="h1" class="task-checkbox"><div class="task-content"><label for="h1" class="task-text">作戰編組表更新</label></div><span class="task-state">完成</span></li>
+                <li class="task-item"><input type="checkbox" id="h2" class="task-checkbox"><div class="task-content"><label for="h2" class="task-text">人員即時戰力維護更新</label></div><span class="task-state">完成</span></li>
+            </ul>
+        </section>
+        
+        <section class="card column-card card-shift">
+            <div class="section-header">
+                <div class="section-title"><span>🔄</span><h2>基本交班事項</h2><span class="badge" data-badge="shift">0/3</span></div>
+                <button class="btn btn-reset" onclick="resetSection('shift')">重置</button>
+            </div>
+            <ul class="task-list" id="shift-tasks">
+                <li class="task-item"><input type="checkbox" id="s1" class="task-checkbox"><div class="task-content"><label for="s1" class="task-text">網路通報</label></div><span class="task-state">完成</span></li>
+                <li class="task-item"><input type="checkbox" id="s2" class="task-checkbox"><div class="task-content"><label for="s2" class="task-text">填寫工作紀錄</label></div><span class="task-state">完成</span></li>
+                <li class="task-item"><input type="checkbox" id="s3" class="task-checkbox"><div class="task-content"><label for="s3" class="task-text">簽出入登記簿</label><div class="task-subtext">先簽值班 → 再簽交接</div></div><span class="task-state">完成</span></li>
+            </ul>
+        </section>
 
-            <!-- 整點注意事項 -->
-            <div class="column-card card-hourly">
-                <div class="section-header">
-                    <h2>整點注意事項</h2>
-                    <button class="btn-reset" onclick="resetSection('hourly')">重置</button>
-                </div>
-                <div class="task-subtext" style="margin-bottom: 12px; font-weight: 500;">(8, 10, 12, 14, 16, 18, 20, 22時)</div>
-                <ul class="task-list" id="hourly-tasks">
-                    <li class="task-item">
-                        <input type="checkbox" id="h1" class="task-checkbox" onchange="saveState()">
-                        <div class="task-content"><label for="h1" class="task-text">作戰編組表更新</label></div>
-                    </li>
-                    <li class="task-item">
-                        <input type="checkbox" id="h2" class="task-checkbox" onchange="saveState()">
-                        <div class="task-content"><label for="h2" class="task-text">人員即時戰力維護更新</label></div>
-                    </li>
-                </ul>
+    </aside>
+
+    <section class="card schedule-card">
+        <div class="schedule-header">
+            <div>
+                <h2>⏱️ 各時段特殊事項</h2>
+                <p>依勤務時間逐項確認，完成後勾選即可自動儲存。</p>
             </div>
-            
+            <button class="btn btn-reset" onclick="resetSection('schedule')">重置此區</button>
         </div>
 
-        <!-- 右側：時間序任務 -->
-        <div class="column-card">
-            <div class="section-header" style="border-bottom: none; margin-bottom: 0; padding-bottom: 0;">
-                <h2 style="color: var(--text-main);">各時段特殊事項</h2>
-                <button class="btn-reset" onclick="resetSection('schedule')">重置此區</button>
-            </div>
-            <hr style="border: 0; height: 1px; background: var(--border-color); margin: 16px 0 20px 0;">
-            
-            <div class="right-grid">
-                
-                <!-- 晨間準備 -->
-                <div class="section-morning">
-                    <div class="time-block-title theme-morning">🌅 06:00 晨間準備</div>
-                    <ul class="task-list">
-                        <li class="task-item"><input type="checkbox" id="t60_1" class="task-checkbox" onchange="saveState()"><div class="task-content"><label for="t60_1" class="task-text">值宿人員起床</label></div></li>
-                        <li class="task-item"><input type="checkbox" id="t60_2" class="task-checkbox" onchange="saveState()"><div class="task-content"><label for="t60_2" class="task-text">穿著值班服裝</label></div></li>
-                        <li class="task-item"><input type="checkbox" id="t60_3" class="task-checkbox" onchange="saveState()"><div class="task-content"><label for="t60_3" class="task-text">將警報器切換至「值班」</label></div></li>
-                        <li class="task-item"><input type="checkbox" id="t60_4" class="task-checkbox" onchange="saveState()"><div class="task-content"><label for="t60_4" class="task-text">開啟自動門開關</label></div></li>
-                        <li class="task-item"><input type="checkbox" id="t60_5" class="task-checkbox" onchange="saveState()"><div class="task-content"><label for="t60_5" class="task-text">關閉前後車庫電燈</label></div></li>
-                        <li class="task-item"><input type="checkbox" id="t60_6" class="task-checkbox" onchange="saveState()"><div class="task-content"><label for="t60_6" class="task-text">打掃值班台及泡茶區</label></div></li>
-                        <li class="task-item"><input type="checkbox" id="t60_7" class="task-checkbox" onchange="saveState()"><div class="task-content"><label for="t60_7" class="task-text">救護台無線電測試</label></div></li>
-                    </ul>
+        <div class="right-grid">
 
-                    <div class="sub-time">07:40</div>
-                    <ul class="task-list">
-                        <li class="task-item">
-                            <input type="checkbox" id="t74_1" class="task-checkbox" onchange="saveState()">
-                            <div class="task-content">
-                                <label for="t74_1" class="task-text">廣播倒垃圾</label>
-                                <div class="task-subtext">星期三跟星期日沒有垃圾車</div>
-                            </div>
-                        </li>
-                    </ul>
+            <section class="time-section section-morning" data-start="06:00" data-end="08:00">
+                <div class="time-block-title">🌅 晨間</div>
+                <div class="sub-time">06:00</div>
+                <ul class="task-list">
+                    <li class="task-item"><input type="checkbox" id="t60_1" class="task-checkbox"><div class="task-content"><label for="t60_1" class="task-text">值宿人員起床</label></div><span class="task-state">完成</span></li>
+                    <li class="task-item"><input type="checkbox" id="t60_2" class="task-checkbox"><div class="task-content"><label for="t60_2" class="task-text">穿著值班服裝</label></div><span class="task-state">完成</span></li>
+                    <li class="task-item"><input type="checkbox" id="t60_3" class="task-checkbox"><div class="task-content"><label for="t60_3" class="task-text">將警報器切換至「值班」</label></div><span class="task-state">完成</span></li>
+                    <li class="task-item"><input type="checkbox" id="t60_4" class="task-checkbox"><div class="task-content"><label for="t60_4" class="task-text">開啟自動門開關</label></div><span class="task-state">完成</span></li>
+                    <li class="task-item"><input type="checkbox" id="t60_5" class="task-checkbox"><div class="task-content"><label for="t60_5" class="task-text">關閉前後車庫電燈</label></div><span class="task-state">完成</span></li>
+                    <li class="task-item"><input type="checkbox" id="t60_6" class="task-checkbox"><div class="task-content"><label for="t60_6" class="task-text">打掃值班台及泡茶區</label></div><span class="task-state">完成</span></li>
+                    <li class="task-item"><input type="checkbox" id="t60_7" class="task-checkbox"><div class="task-content"><label for="t60_7" class="task-text">救護台無線電測試</label></div><span class="task-state">完成</span></li>
+                </ul>
+                <div class="sub-time">07:40</div>
+                <ul class="task-list">
+                    <li class="task-item"><input type="checkbox" id="t74_1" class="task-checkbox"><div class="task-content"><label for="t74_1" class="task-text">廣播倒垃圾</label><div class="task-subtext">星期三跟星期日沒有垃圾車</div></div><span class="task-state">完成</span></li>
+                </ul>
+                <div class="sub-time">07:50</div>
+                <ul class="task-list">
+                    <li class="task-item"><input type="checkbox" id="t75_1" class="task-checkbox"><div class="task-content"><label for="t75_1" class="task-text">1. 廣播勤教</label></div><span class="task-state">完成</span></li>
+                    <li class="task-item"><input type="checkbox" id="t75_2" class="task-checkbox"><div class="task-content"><label for="t75_2" class="task-text">2. 請接班人員升旗</label></div><span class="task-state">完成</span></li>
+                </ul>
+            </section>
 
-                    <div class="sub-time">07:50</div>
-                    <ul class="task-list">
-                        <li class="task-item"><input type="checkbox" id="t75_1" class="task-checkbox" onchange="saveState()"><div class="task-content"><label for="t75_1" class="task-text">1. 廣播勤教</label></div></li>
-                        <li class="task-item"><input type="checkbox" id="t75_2" class="task-checkbox" onchange="saveState()"><div class="task-content"><label for="t75_2" class="task-text">2. 請接班人員升旗</label></div></li>
-                    </ul>
-                </div>
+            <section class="time-section section-day" data-start="08:00" data-end="12:00">
+                <div class="time-block-title">☀️ 上午</div>
+                <div class="sub-time">08:00</div>
+                <ul class="task-list">
+                    <li class="task-item"><input type="checkbox" id="t80_3" class="task-checkbox"><div class="task-content"><label for="t80_3" class="task-text">變更作戰編組表</label><div class="task-subtext">資料 &gt; 編輯連結 &gt; 變更來源 &gt; 換日期</div></div><span class="task-state">完成</span></li>
+                    <li class="task-item"><input type="checkbox" id="t80_4" class="task-checkbox"><div class="task-content"><label for="t80_4" class="task-text">車輛本日檢查紀錄</label><div class="task-subtext">記得點上午保溫</div></div><span class="task-state">完成</span></li>
+                    <li class="task-item"><input type="checkbox" id="t80_5" class="task-checkbox"><div class="task-content"><label for="t80_5" class="task-text">週、月保養之車輛</label></div><span class="task-state">完成</span></li>
+                    <li class="task-item"><input type="checkbox" id="t80_6" class="task-checkbox"><div class="task-content"><label for="t80_6" class="task-text">檢查行車紀錄紙</label><div class="task-subtext">每日31車跟61車，星期六全部車輛</div></div><span class="task-state">完成</span></li>
+                    <li class="task-item"><input type="checkbox" id="t80_7" class="task-checkbox"><div class="task-content"><label for="t80_7" class="task-text">訂早餐</label></div><span class="task-state">完成</span></li>
+                </ul>
+                <div class="sub-time">11:00</div>
+                <ul class="task-list">
+                    <li class="task-item"><input type="checkbox" id="t110_1" class="task-checkbox"><div class="task-content"><label for="t110_1" class="task-text">訂午餐</label></div><span class="task-state">完成</span></li>
+                </ul>
+                <div class="sub-time">11:50</div>
+                <ul class="task-list">
+                    <li class="task-item"><input type="checkbox" id="t115_1" class="task-checkbox"><div class="task-content"><label for="t115_1" class="task-text">勞務役時數表計算、蓋章</label></div><span class="task-state">完成</span></li>
+                </ul>
+            </section>
 
-                <!-- 上午班 -->
-                <div class="section-day">
-                    <div class="time-block-title theme-day">☀️ 08:00 上午班</div>
-                    <ul class="task-list">
-                        <li class="task-item">
-                            <input type="checkbox" id="t80_3" class="task-checkbox" onchange="saveState()">
-                            <div class="task-content">
-                                <label for="t80_3" class="task-text">更新作戰編組表</label>
-                                <div class="task-subtext">資料 > 編輯連結 > 變更來源 > 換日期</div>
-                            </div>
-                        </li>
-                        <li class="task-item"><input type="checkbox" id="t80_4" class="task-checkbox" onchange="saveState()"><div class="task-content"><label for="t80_4" class="task-text">車輛本日檢查紀錄(上午保溫)</label></div></li>
-                        <li class="task-item"><input type="checkbox" id="t80_5" class="task-checkbox" onchange="saveState()"><div class="task-content"><label for="t80_5" class="task-text">週、月保養之車輛</label></div></li>
-                        <li class="task-item"><input type="checkbox" id="t80_6" class="task-checkbox" onchange="saveState()"><div class="task-content"><label for="t80_6" class="task-text">檢查行車紀錄紙</label></div></li>
-                        <li class="task-item"><input type="checkbox" id="t80_7" class="task-checkbox" onchange="saveState()"><div class="task-content"><label for="t80_7" class="task-text">訂早餐</label></div></li>
-                    </ul>
-                    
-                    <div class="sub-time">11:00</div>
-                    <ul class="task-list">
-                        <li class="task-item"><input type="checkbox" id="t110_1" class="task-checkbox" onchange="saveState()"><div class="task-content"><label for="t110_1" class="task-text">訂午餐</label></div></li>
-                    </ul>
+            <section class="time-section section-afternoon" data-start="12:00" data-end="18:00">
+                <div class="time-block-title">🕛 下午</div>
+                <div class="sub-time">14:50</div>
+                <ul class="task-list">
+                    <li class="task-item"><input type="checkbox" id="t145_1" class="task-checkbox"><div class="task-content"><label for="t145_1" class="task-text">廣播下午體技能訓練</label></div><span class="task-state">完成</span></li>
+                </ul>
+                <div class="sub-time">16:00</div>
+                <ul class="task-list">
+                    <li class="task-item"><input type="checkbox" id="t160_1" class="task-checkbox"><div class="task-content"><label for="t160_1" class="task-text">車輛下午保溫</label><div class="task-subtext">10、11、12、1、2、3月</div></div><span class="task-state">完成</span></li>
+                </ul>
+                <div class="sub-time">17:00</div>
+                <ul class="task-list">
+                    <li class="task-item"><input type="checkbox" id="t170_1" class="task-checkbox"><div class="task-content"><label for="t170_1" class="task-text">訂晚餐</label></div><span class="task-state">完成</span></li>
+                </ul>
+                <div class="sub-time">17:50</div>
+                <ul class="task-list">
+                    <li class="task-item"><input type="checkbox" id="t175_1" class="task-checkbox"><div class="task-content"><label for="t175_1" class="task-text">請接班人員降旗</label></div><span class="task-state">完成</span></li>
+                    <li class="task-item"><input type="checkbox" id="t175_2" class="task-checkbox"><div class="task-content"><label for="t175_2" class="task-text">勞務役時數表計算、蓋章</label></div><span class="task-state">完成</span></li>
+                </ul>
+            </section>
 
-                    <div class="sub-time">11:50</div>
-                    <ul class="task-list">
-                        <li class="task-item"><input type="checkbox" id="t115_1" class="task-checkbox" onchange="saveState()"><div class="task-content"><label for="t115_1" class="task-text">勞務役時數表計算、蓋章</label></div></li>
-                    </ul>
-                </div>
+            <section class="time-section section-night" data-start="18:00" data-end="22:00">
+                <div class="time-block-title">🌙 晚間</div>
+                <div class="sub-time">18:00</div>
+                <ul class="task-list">
+                    <li class="task-item"><input type="checkbox" id="t180_1" class="task-checkbox"><div class="task-content"><label for="t180_1" class="task-text">開啟前後車庫電燈</label></div><span class="task-state">完成</span></li>
+                    <li class="task-item"><input type="checkbox" id="t180_1a" class="task-checkbox"><div class="task-content"><label for="t180_1a" class="task-text">關閉後方玻璃門</label></div><span class="task-state">完成</span></li>
+                    <li class="task-item"><input type="checkbox" id="t180_2" class="task-checkbox"><div class="task-content"><label for="t180_2" class="task-text">列印明天勤務表並上傳</label><div class="task-subtext">指揮中心：1份 (PDF檔名: 中山分隊+日期)<br>第三大隊：2份 (大隊回存 PDF+EXCEL)<br>分隊 LINE：1份 (上傳 PDF)</div></div><span class="task-state">完成</span></li>
+                </ul>
+                <div class="sub-time">19:00</div>
+                <ul class="task-list">
+                    <li class="task-item"><input type="checkbox" id="t190_1" class="task-checkbox"><div class="task-content"><label for="t190_1" class="task-text">派遣台電腦重開機</label><div class="task-subtext">僅限星期四，需通知指揮中心</div></div><span class="task-state">完成</span></li>
+                </ul>
+                <div class="sub-time">20:00</div>
+                <ul class="task-list">
+                    <li class="task-item"><input type="checkbox" id="t200_1" class="task-checkbox"><div class="task-content"><label for="t200_1" class="task-text">登打值勤現況管制系統</label></div><span class="task-state">完成</span></li>
+                </ul>
+                <div class="sub-time">21:00</div>
+                <ul class="task-list">
+                    <li class="task-item"><input type="checkbox" id="t210_1" class="task-checkbox"><div class="task-content"><label for="t210_1" class="task-text">救災台無線電測試</label></div><span class="task-state">完成</span></li>
+                    <li class="task-item"><input type="checkbox" id="t210_2" class="task-checkbox"><div class="task-content"><label for="t210_2" class="task-text">119 進線測試</label></div><span class="task-state">完成</span></li>
+                </ul>
+            </section>
 
-                <!-- 下午班 -->
-                <div class="section-afternoon">
-                    <div class="time-block-title theme-afternoon">🕛 12:00-18:00 下午班</div>
-                    
-                    <div class="sub-time" style="margin-top: 12px;">14:50</div>
-                    <ul class="task-list">
-                        <li class="task-item"><input type="checkbox" id="t145_1" class="task-checkbox" onchange="saveState()"><div class="task-content"><label for="t145_1" class="task-text">廣播下午體技能訓練</label></div></li>
-                    </ul>
+            <section class="time-section section-sleep" data-start="22:00" data-end="24:00">
+                <div class="time-block-title">🛌 值宿</div>
+                <div class="sub-time">22:00</div>
+                <ul class="task-list">
+                    <li class="task-item"><input type="checkbox" id="t220_1" class="task-checkbox"><div class="task-content"><label for="t220_1" class="task-text">記得帶值班服裝</label></div><span class="task-state">完成</span></li>
+                    <li class="task-item"><input type="checkbox" id="t220_2" class="task-checkbox"><div class="task-content"><label for="t220_2" class="task-text">檢查消防車是否鎖門</label></div><span class="task-state">完成</span></li>
+                    <li class="task-item"><input type="checkbox" id="t220_3" class="task-checkbox"><div class="task-content"><label for="t220_3" class="task-text">將警報器切換至「值宿」</label></div><span class="task-state">完成</span></li>
+                    <li class="task-item"><input type="checkbox" id="t220_4" class="task-checkbox"><div class="task-content"><label for="t220_4" class="task-text">關閉自動門開關</label></div><span class="task-state">完成</span></li>
+                    <li class="task-item"><input type="checkbox" id="t220_5" class="task-checkbox"><div class="task-content"><label for="t220_5" class="task-text">訂宵夜、晚安！</label></div><span class="task-state">完成</span></li>
+                </ul>
+            </section>
 
-                    <div class="sub-time">16:00</div>
-                    <ul class="task-list">
-                        <li class="task-item">
-                            <input type="checkbox" id="t160_1" class="task-checkbox" onchange="saveState()">
-                            <div class="task-content">
-                                <label for="t160_1" class="task-text">車輛下午保溫</label>
-                                <div class="task-subtext">10、11、12、1、2、3月</div>
-                            </div>
-                        </li>
-                    </ul>
-
-                    <div class="sub-time">17:00</div>
-                    <ul class="task-list">
-                        <li class="task-item"><input type="checkbox" id="t170_1" class="task-checkbox" onchange="saveState()"><div class="task-content"><label for="t170_1" class="task-text">訂晚餐</label></div></li>
-                    </ul>
-
-                    <div class="sub-time">17:50</div>
-                    <ul class="task-list">
-                        <li class="task-item"><input type="checkbox" id="t175_1" class="task-checkbox" onchange="saveState()"><div class="task-content"><label for="t175_1" class="task-text">請接班人員降旗</label></div></li>
-                        <li class="task-item"><input type="checkbox" id="t175_2" class="task-checkbox" onchange="saveState()"><div class="task-content"><label for="t175_2" class="task-text">勞務役時數表計算、蓋章</label></div></li>
-                    </ul>
-                </div>
-
-                <!-- 晚間班 -->
-                <div class="section-night">
-                    <div class="time-block-title theme-night">🌙 18:00 晚間班</div>
-                    <ul class="task-list">
-                        <li class="task-item"><input type="checkbox" id="t180_1" class="task-checkbox" onchange="saveState()"><div class="task-content"><label for="t180_1" class="task-text">開啟前後車庫電燈</label></div></li>
-                        <li class="task-item">
-                            <input type="checkbox" id="t180_2" class="task-checkbox" onchange="saveState()">
-                            <div class="task-content">
-                                <label for="t180_2" class="task-text">列印明天勤務表並上傳</label>
-                                <div class="task-subtext">指揮中心：1份 (PDF檔名: 中山分隊+日期)<br>第三大隊：2份 (大隊回存 PDF+EXCEL)<br>分隊 LINE：1份 (上傳 PDF)</div>
-                            </div>
-                        </li>
-                    </ul>
-
-                    <div class="sub-time">19:00</div>
-                    <ul class="task-list">
-                        <li class="task-item">
-                            <input type="checkbox" id="t190_1" class="task-checkbox" onchange="saveState()">
-                            <div class="task-content">
-                                <label for="t190_1" class="task-text">派遣台電腦重開機</label>
-                                <div class="task-subtext">僅限星期四，需通知指揮中心</div>
-                            </div>
-                        </li>
-                    </ul>
-
-                    <div class="sub-time">20:00</div>
-                    <ul class="task-list">
-                        <li class="task-item"><input type="checkbox" id="t200_1" class="task-checkbox" onchange="saveState()"><div class="task-content"><label for="t200_1" class="task-text">登打值勤現況管制系統</label></div></li>
-                    </ul>
-                    
-                    <div class="sub-time">21:00</div>
-                    <ul class="task-list">
-                        <li class="task-item"><input type="checkbox" id="t210_1" class="task-checkbox" onchange="saveState()"><div class="task-content"><label for="t210_1" class="task-text">救災台無線電測試</label></div></li>
-                        <li class="task-item"><input type="checkbox" id="t210_2" class="task-checkbox" onchange="saveState()"><div class="task-content"><label for="t210_2" class="task-text">119 進線測試</label></div></li>
-                    </ul>
-                </div>
-
-                <!-- 值宿準備 -->
-                <div class="section-sleep">
-                    <div class="time-block-title theme-sleep">🛌 22:00 值宿準備</div>
-                    <ul class="task-list">
-                        <li class="task-item"><input type="checkbox" id="t220_1" class="task-checkbox" onchange="saveState()"><div class="task-content"><label for="t220_1" class="task-text">記得帶值班服裝</label></div></li>
-                        <li class="task-item"><input type="checkbox" id="t220_2" class="task-checkbox" onchange="saveState()"><div class="task-content"><label for="t220_2" class="task-text">檢查消防車是否鎖門</label></div></li>
-                        <li class="task-item"><input type="checkbox" id="t220_3" class="task-checkbox" onchange="saveState()"><div class="task-content"><label for="t220_3" class="task-text">將警報器切換至「值宿」</label></div></li>
-                        <li class="task-item"><input type="checkbox" id="t220_4" class="task-checkbox" onchange="saveState()"><div class="task-content"><label for="t220_4" class="task-text">關閉自動門開關</label></div></li>
-                        <li class="task-item"><input type="checkbox" id="t220_5" class="task-checkbox" onchange="saveState()"><div class="task-content"><label for="t220_5" class="task-text">訂宵夜、晚安！</label></div></li>
-                    </ul>
-                </div>
-
-            </div>
         </div>
-    </div>
+    </section>
+</main>
+</div>
 
-    <script>
-        function updateClock() {
-            const now = new Date();
-            const year = now.getFullYear();
-            const month = String(now.getMonth() + 1).padStart(2, '0');
-            const date = String(now.getDate()).padStart(2, '0');
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const seconds = String(now.getSeconds()).padStart(2, '0');
-            document.getElementById('clock').textContent = `${year}-${month}-${date} ${hours}:${minutes}:${seconds}`;
-        }
-        setInterval(updateClock, 1000);
-        updateClock();
+<div class="toast" id="toast">✓ 勤務進度已儲存</div>
 
-        function saveState() {
-            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-            const state = {};
-            checkboxes.forEach(cb => {
-                state[cb.id] = cb.checked;
-            });
-            localStorage.setItem('zsFireStationChecklist', JSON.stringify(state));
-        }
+<script>
+const STORAGE_KEY = "zsFireStationChecklist";
 
-        function loadState() {
-            const state = JSON.parse(localStorage.getItem('zsFireStationChecklist') || '{}');
-            for (const id in state) {
-                const cb = document.getElementById(id);
-                if (cb) {
-                    cb.checked = state[id];
-                }
-            }
-        }
+function updateClock(){
+    const now = new Date();
+    highlightCurrentSection(now);
+}
 
-        function resetSection(section) {
-            let containerId;
-            if (section === 'basic') containerId = 'basic-tasks';
-            else if (section === 'shift') containerId = 'shift-tasks';
-            else if (section === 'hourly') containerId = 'hourly-tasks';
-            else containerId = 'schedule-tasks'; 
+function allCheckboxes(){
+    return [...document.querySelectorAll('input.task-checkbox')];
+}
 
-            if(containerId === 'schedule-tasks') {
-                const rightGrid = document.querySelector('.right-grid');
-                const checkboxes = rightGrid.querySelectorAll('input[type="checkbox"]');
-                checkboxes.forEach(cb => cb.checked = false);
-            } else {
-                const container = document.getElementById(containerId);
-                const checkboxes = container.querySelectorAll('input[type="checkbox"]');
-                checkboxes.forEach(cb => cb.checked = false);
-            }
-            saveState();
-        }
+function saveState(showToast=true){
+    const state = {};
+    allCheckboxes().forEach(cb => state[cb.id] = cb.checked);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    refreshUI();
+    if(showToast) showToastMessage("✓ 勤務進度已儲存");
+}
 
-        function resetAll() {
-            if(confirm('確定要清除所有的打勾紀錄嗎？')) {
-                const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-                checkboxes.forEach(cb => cb.checked = false);
-                saveState();
-            }
-        }
+function loadState(){
+    try{
+        const state = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+        allCheckboxes().forEach(cb => {
+            cb.checked = Boolean(state[cb.id]);
+        });
+    }catch(e){
+        console.warn("無法讀取儲存資料",e);
+    }
+    refreshUI();
+}
 
-        window.onload = loadState;
-    </script>
+function refreshUI(){
+    const boxes = allCheckboxes();
+
+    boxes.forEach(cb => {
+        const item = cb.closest(".task-item");
+        if(item) item.classList.toggle("done", cb.checked);
+    });
+
+    updateBadge("basic","basic-tasks");
+    updateBadge("shift","shift-tasks");
+    updateBadge("hourly","hourly-tasks");
+}
+
+function updateBadge(name,containerId){
+    const el = document.querySelector(`[data-badge="${name}"]`);
+    const container = document.getElementById(containerId);
+    if(!el || !container) return;
+    const boxes = [...container.querySelectorAll("input.task-checkbox")];
+    const done = boxes.filter(x => x.checked).length;
+    el.textContent = `${done}/${boxes.length}`;
+}
+
+function resetSection(section){
+    let container;
+    if(section === "basic") container = document.getElementById("basic-tasks");
+    else if(section === "shift") container = document.getElementById("shift-tasks");
+    else if(section === "hourly") container = document.getElementById("hourly-tasks");
+    else container = document.querySelector(".right-grid");
+
+    if(!container) return;
+    container.querySelectorAll("input.task-checkbox").forEach(cb => cb.checked = false);
+    saveState(false);
+    showToastMessage("↺ 此區已重置");
+}
+
+let toastTimer;
+function showToastMessage(message){
+    const toast = document.getElementById("toast");
+    toast.textContent = message;
+    toast.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove("show"),2000);
+}
+
+function minutes(hm){
+    const [h,m] = hm.split(":").map(Number);
+    return h*60+m;
+}
+
+function highlightCurrentSection(now){
+    const current = now.getHours()*60 + now.getMinutes();
+    document.querySelectorAll(".time-section").forEach(section => {
+        const start = minutes(section.dataset.start);
+        const end = minutes(section.dataset.end);
+        section.classList.toggle("current", current >= start && current < end);
+    });
+}
+
+document.addEventListener("change", e => {
+    if(e.target.matches("input.task-checkbox")) saveState();
+});
+
+window.addEventListener("load", () => {
+    loadState();
+    updateClock();
+    setInterval(updateClock,1000);
+});
+</script>
 </body>
 </html>
